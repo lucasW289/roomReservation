@@ -1,4 +1,5 @@
 // Define the Room constructor function
+//Githubbb
 function Room(roomNumber, roomSize, status) {
     this.roomNumber = roomNumber;
     this.roomSize = roomSize;

@@ -1,5 +1,4 @@
 // Define the Room constructor function
-//Githubbb
 function Room(roomNumber, roomSize, status) {
     this.roomNumber = roomNumber;
     this.roomSize = roomSize;
@@ -22,9 +21,11 @@ function createStoreData(prefix, size, start, end) {
         allRooms.push(new Room(roomNumber, size, status));
     }
 }
-
 createStoreData('LR', 'Large', 101, 110);
 createStoreData('MR', 'Medium', 201, 210);
 createStoreData('SR', 'Small', 301, 310);
 
-
+const userData = [
+    { id: 1, name: 'John', email: 'john@example.com' },
+    { id: 2, name: 'Alice', email: 'alice@example.com' }
+];

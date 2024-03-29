@@ -7,57 +7,19 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Include SweetAlert2 CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #343a40;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #343a40;
-            color: #fff;
-        }
-        .btn-reserve {
-            padding: 8px 16px;
-            font-size: 14px;
-            background-color: #007bff;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn-reserve:hover {
-            background-color: #0056b3;
-        }
-        .filter-inputs {
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+ 
 </head>
 <body>
 
 <div id="navbarContainer"></div>
+
+<!-- Room Info Section -->
+<div id="room-info-section"></div>
+
 
 <div class="container mt-5">
     <h1>Room Availability</h1>
@@ -132,6 +94,14 @@
         .then(data => {
             document.getElementById('navbarContainer').innerHTML = data;
         });
+    // Include roominfo using JavaScript Fetch API
+
+        fetch('roominfo.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('room-info-section').innerHTML = data;
+        })
+        .catch(error => console.error(error));
 </script>
 
 </body>

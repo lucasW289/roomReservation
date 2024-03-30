@@ -42,7 +42,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="#">Browse Room List</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">History</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Status</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
                 <li class="nav-item">
                     <button class="btn btn-danger mx-2" onclick="logout()">Log Out</button>
                 </li>
@@ -55,10 +55,5 @@
     window.addEventListener('DOMContentLoaded', (event) => {
         const currentPage = window.location.pathname;
         const navbar = document.getElementById('main-navbar');
-
-        // Check if the current page is the staff page
-        if (currentPage.includes('browseRoomStaff.html')) {
-            navbar.style.backgroundColor = '#E2F8F4'; // Apply the background color for the staff page
-        }
-    });
+    })
 </script>

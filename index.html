@@ -72,6 +72,10 @@
     <ul id="pagination" class="pagination justify-content-center"></ul>
 
 </div>
+<div id="footerContainer">
+    <!-- Include footer.html -->
+    <footer id="footer-section"></footer>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -100,6 +104,13 @@
         .then(response => response.text())
         .then(data => {
             document.getElementById('room-info-section').innerHTML = data;
+        })
+        .catch(error => console.error(error));
+
+        fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-section').innerHTML = data;
         })
         .catch(error => console.error(error));
 </script>

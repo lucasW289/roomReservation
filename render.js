@@ -1,5 +1,5 @@
 // Function to render table with room availability data
-function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
+function renderTable(allRooms, timeSlots, userType, currentPage = 1, rowsPerPage = 3) {
     const tableBody = document.querySelector('#roomAvailability tbody');
     const tableHead = document.querySelector('#roomAvailability thead');
     tableBody.innerHTML = '';
@@ -15,14 +15,14 @@ function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
     const currentHour = currentTime.getHours();
     const currentMinute = currentTime.getMinutes();
 
-    // Create table head with "Reserve" button in the last column
+    // Create table head with appropriate buttons based on user type
     const headRow = document.createElement('tr');
     headRow.innerHTML = `
         <th>Room Number</th>
         <th>Room Size</th>
         <th>Time Slot</th>
         <th>Availability</th>
-        <th>Reserve</th>
+        ${userType === 'staff' ? '<th>Edit</th><th>Disable</th>' : '<th>Reserve</th>'}
     `;
     tableHead.appendChild(headRow);
 
@@ -50,7 +50,7 @@ function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
                         break;
                     case 'disabled':
                         availabilityClass = 'table-secondary'; // Gray color for disabled
-                        isDisabled = true;
+                        isDisabled = true; // Mark the button as disabled
                         break;
                     default:
                         break;
@@ -63,7 +63,11 @@ function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
                 <td>${room.roomSize}</td>
                 <td>${timeSlot}</td>
                 <td class="${availabilityClass}">${room.status[timeSlot]}</td>
-                <td><button class="btn btn-primary reserve-btn" ${isDisabled ? 'disabled' : ''} data-room="${room.roomNumber}" data-time="${timeSlot}">Reserve</button></td>
+                ${userType === 'staff' ? 
+                    `<td><button class="btn btn-primary edit-btn" data-room="${room.roomNumber}" data-time="${timeSlot}">Edit</button></td>
+                     <td><button class="btn btn-danger disable-btn" ${isDisabled ? 'disabled' : ''} data-room="${room.roomNumber}" data-time="${timeSlot}">Disable</button></td>` :
+                    `<td><button class="btn btn-primary reserve-btn" ${isDisabled ? 'disabled' : ''} data-room="${room.roomNumber}" data-time="${timeSlot}">Reserve</button></td>`
+                }
             `;
             tableBody.appendChild(tr);
         });
@@ -88,7 +92,7 @@ function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
         pagination.appendChild(li);
 
         link.addEventListener('click', () => {
-            renderTable(allRooms, timeSlots, i, rowsPerPage);
+            renderTable(allRooms, timeSlots, userType, i, rowsPerPage);
         });
     }
 
@@ -104,7 +108,7 @@ function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
         pagination.insertBefore(prevLi, pagination.firstElementChild);
 
         prevLink.addEventListener('click', () => {
-            renderTable(allRooms, timeSlots, currentPage - 1, rowsPerPage);
+            renderTable(allRooms, timeSlots, userType, currentPage - 1, rowsPerPage);
         });
     }
 
@@ -120,7 +124,7 @@ function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
         pagination.appendChild(nextLi);
 
         nextLink.addEventListener('click', () => {
-            renderTable(allRooms, timeSlots, currentPage + 1, rowsPerPage);
+            renderTable(allRooms, timeSlots, userType, currentPage + 1, rowsPerPage);
         });
     }
 }

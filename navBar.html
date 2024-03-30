@@ -50,3 +50,14 @@
         </div>
     </div>
 </nav>
+<script>
+    // JavaScript code to set background color based on the parameter
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const navbar = document.getElementById('main-navbar');
+        const isStaffPage = {{ isStaffPage }}; // Assuming you're using a template engine that can pass variables
+
+        if (isStaffPage) {
+            navbar.style.backgroundColor = '#E2F8F4'; // Apply the background color for the staff page
+        }
+    });
+</script>

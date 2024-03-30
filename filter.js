@@ -12,8 +12,7 @@ function renderTable(allRooms, timeSlots, currentPage = 1, rowsPerPage = 3) {
     const currentRooms = allRooms.slice(indexOfFirstRoom, indexOfLastRoom);
 
     const currentTime = new Date();
-    currentTime.setHours(11);
-    currentTime.setMinutes(0);
+   
     const currentHour = currentTime.getHours();
     const currentMinute = currentTime.getMinutes();
   

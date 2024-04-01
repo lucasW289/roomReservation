@@ -1,5 +1,3 @@
-
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,41 +7,88 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
-        .container-fluid {
+        body {
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container-fluid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
         }
         .left-div, .right-div {
-            width: 50%;
-            height: 100vh;
-            float: left;
+            width: 45%;
+            height: 100%;
             box-sizing: border-box;
+            padding: 20px;
+        }
+        .left-div {
+            background-color: white;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        .left-div {
-            background-color: white;
-        }
         .right-div {
             background-color: #FFCF81;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .form-group {
             margin-bottom: 1rem;
         }
+        .bottom-image {
+            max-width: 90%;
+            max-height: 50vh;
+            object-fit: cover;
+        }
+        .overlay-text {
+            color: black;
+            font-size: 24px;
+            text-align: center;
+        }
+        .right-content {
+            text-align: center;
+            padding: 0px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .company-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .company-description {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+       
+.container-fluid {
+    width: 100%;
+    padding-right: 0; /* Remove padding-right */
+    padding-left: var(--bs-gutter-x, .75rem);
+    margin-right: auto;
+    margin-left: auto;
+}
+
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="left-div">
-          
-            <form>
-              <div class="text-center">
-                <img src="/images/Flogo.png"
-                  style="width: 185px;" alt="logo">
-                  <hr>
-                <h4 class="mt-1 mb-3 pb-1">Please login to your account</h4>
-              </div>
+            <form style="width: 80%;">
+                <div class="text-center">
+                    <!-- Logo -->
+                    <img src="images/logo.png" style="width: 185px;" alt="logo">
+                    <hr>
+                    <h4 class="mt-1 mb-3 pb-1">Please login to your account</h4>
+                </div>
                 <div class="form-group">
                     <label for="IDUsername">Username</label>
                     <input type="text" id="IDUsername" class="form-control" placeholder="Username...">
@@ -53,74 +98,77 @@
                     <input type="password" id="IDPassword" class="form-control" placeholder="Password...">
                 </div>
                 <div class="form-group">
-                  <div class="d-grid">
-                    <button class="btn btn-primary" type="button">Login</button>
-                  </div>
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="button">Login</button>
+                    </div>
                 </div>
                 <div class="form-group d-flex align-items-center">
-                  <p class="me-2 mb-0">Don't have an account?</p>
-                  <button class="btn btn-outline-danger" type="button">Create new</button>
-              </div>
+                    <p class="me-2 mb-0">Don't have an account?</p>
+                    <button class="btn btn-outline-danger" type="button">Create new</button>
+                </div>
             </form>
         </div>
         <div class="right-div">
-          <div class="m-4">
-            <h3>Welcome to our Room reservation system</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-          </div>
+            <!-- Right Div Content -->
+            <div class="overlay-text">
+                <div class="company-name">ʟɨɮ</div>
+                <div class="company-description">
+                    Welcome to our Room reservation system. 
+            </div>
+            <!-- Image -->
+            <img src="images/rl.png" alt="RL Logo" class="bottom-image">
         </div>
     </div>
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-          const usernameField = document.getElementById("IDUsername");
-          const passwordField = document.getElementById("IDPassword");
-          const loginButton = document.querySelector('.btn-primary');
-          const createNewButton = document.querySelector('.btn-outline-danger');
-  
-          loginButton.addEventListener("click", function () {
-              const username = usernameField.value.trim();
-              const password = passwordField.value.trim();
-  
-              if (!username || !password) {
-                  alert("Please fill in both username and password fields.");
-                  return; // Stop execution if any field is empty
-              }
-  
-              // Here, you would typically send the username and password to the server
-              // for authentication. Then, based on the user's role, you can redirect
-              // them to different pages or perform different actions.
-  
-              // For demonstration purposes, let's assume we have predefined credentials
-              // for different roles.
-              const userCredentials = [
-                  { username: "student", password: "student123", role: "student" },
-                  { username: "staff", password: "staff123", role: "staff" },
-                  { username: "approver", password: "approver123", role: "approver" }
-              ];
-  
-              // Check if the entered credentials match any predefined credentials
-              const matchedUser = userCredentials.find(user => user.username === username && user.password === password);
-  
-              if (matchedUser) {
-                  // Redirect to different pages based on the user's role
-                  if (matchedUser.role === "student") {
-                      window.location.href = "index.html";
-                  } else if (matchedUser.role === "staff") {
-                      window.location.href = "staff.html";
-                  } else if (matchedUser.role === "approver") {
-                      window.location.href = "approver.html";
-                  }
-              } else {
-                  alert("Invalid username or password.");
-              }
-          });
-  
-          // Event listener for the "Create new" button
-          createNewButton.addEventListener("click", function () {
-              window.location.href = "regist.html"; // Redirect to registration page
-          });
-      });
-  </script>
-  
+        document.addEventListener("DOMContentLoaded", function () {
+            const usernameField = document.getElementById("IDUsername");
+            const passwordField = document.getElementById("IDPassword");
+            const loginButton = document.querySelector('.btn-primary');
+            const createNewButton = document.querySelector('.btn-outline-danger');
+
+            loginButton.addEventListener("click", function () {
+                const username = usernameField.value.trim();
+                const password = passwordField.value.trim();
+
+                if (!username || !password) {
+                    alert("Please fill in both username and password fields.");
+                    return; // Stop execution if any field is empty
+                }
+
+                // Here, you would typically send the username and password to the server
+                // for authentication. Then, based on the user's role, you can redirect
+                // them to different pages or perform different actions.
+
+                // For demonstration purposes, let's assume we have predefined credentials
+                // for different roles.
+                const userCredentials = [
+                    { username: "student", password: "student123", role: "student" },
+                    { username: "staff", password: "staff123", role: "staff" },
+                    { username: "approver", password: "approver123", role: "approver" }
+                ];
+
+                // Check if the entered credentials match any predefined credentials
+                const matchedUser = userCredentials.find(user => user.username === username && user.password === password);
+
+                if (matchedUser) {
+                    // Redirect to different pages based on the user's role
+                    if (matchedUser.role === "student") {
+                        window.location.href = "browseRoomuser.html";
+                    } else if (matchedUser.role === "staff") {
+                        window.location.href = "browseRoomStaff.html";
+                    } else if (matchedUser.role === "approver") {
+                        window.location.href = "browseroomapv.html";
+                    }
+                } else {
+                    alert("Invalid username or password.");
+                }
+            });
+
+            // Event listener for the "Create new" button
+            createNewButton.addEventListener("click", function () {
+                window.location.href = "regist.html"; // Redirect to registration page
+            });
+        });
+    </script>
 </body>
 </html>

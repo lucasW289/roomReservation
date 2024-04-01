@@ -35,6 +35,36 @@
         .form-card {
             max-width: 500px;
         }
+        .overlay-text {
+            color: black;
+            font-size: 24px;
+            text-align: center;
+        }
+        .company-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .company-description {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .bottom-image {
+            max-width: 90%;
+            max-height: 50vh;
+            object-fit: cover;
+        }
+        .container-fluid {
+            width: 100%;
+            padding-right: 0; /* Remove padding-right */
+            padding-left: var(--bs-gutter-x, .75rem);
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .password-strength {
+            font-size: 12px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -50,22 +80,32 @@
                     <div class="form-group">
                         <label for="IDName">Name</label>
                         <input type="text" id="IDName" class="form-control" placeholder="Enter your full name...">
+                        <div class="invalid-feedback">Name is required.</div>
                     </div>
                     <div class="form-group">
                         <label for="IDEmail">Email</label>
                         <input type="email" id="IDEmail" class="form-control" placeholder="Enter your email address...">
+                        <div class="invalid-feedback">Valid email is required.</div>
                     </div>
                     <div class="form-group">
                         <label for="IDUsername">Username</label>
                         <input type="text" id="IDUsername" class="form-control" placeholder="Enter your username...">
+                        <div class="invalid-feedback">Username is required.</div>
                     </div>
                     <div class="form-group">
                         <label for="IDPassword">Password</label>
                         <input type="password" id="IDPassword" class="form-control" placeholder="Enter your password...">
+                        <div class="invalid-feedback">Password is required.</div>
+                        <div class="password-strength"></div>
                     </div>
                     <div class="form-group">
                         <label for="IDConfirmPassword">Confirm Password</label>
                         <input type="password" id="IDConfirmPassword" class="form-control" placeholder="Confirm your password...">
+                        <div class="invalid-feedback">Please confirm your password.</div>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="termsCheck">
+                        <label class="form-check-label" for="termsCheck">I agree to the <a href="#">Terms and Conditions</a></label>
                     </div>
                     <div class="text-center pt-3 pb-1">
                         <div class="d-grid">
@@ -81,11 +121,16 @@
             </div>
         </div>
         <div class="right-div">
-            <div class="m-4">
-                <h3>Welcome to our Room reservation system</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <!-- Right Div Content -->
+            <div class="overlay-text">
+                <div class="company-name">ʟɨɮ</div>
+                <div class="company-description">
+                    Welcome to our Room reservation system. 
             </div>
+            <!-- Image -->
+            <img src="images/rl.png" alt="RL Logo" class="bottom-image">
         </div>
+    </div>
     </div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -103,6 +148,7 @@
               const password = passwordField.value.trim();
               const confirmPassword = confirmPasswordField.value.trim();
   
+              // Validation
               if (!name || !email || !username || !password || !confirmPassword) {
                   alert("Please fill in all fields.");
                   return; // Stop execution if any field is empty
@@ -110,22 +156,50 @@
   
               if (password !== confirmPassword) {
                   alert("Passwords do not match!");
-              } else {
-                  alert("sign up completed");
-                  window.location.href = "login.html"; // Redirect to login page
+                  return;
               }
+
+              const termsCheck = document.getElementById("termsCheck");
+              if (!termsCheck.checked) {
+                  alert("Please agree to the Terms and Conditions.");
+                  return;
+              }
+
+              // Proceed with sign up
+              alert("Sign up completed");
+              window.location.href = "login.html"; // Redirect to login page
           });
       });
-    document.addEventListener("DOMContentLoaded", function () {
-        const loginButton = document.querySelector('.btn-outline-primary');
 
-        loginButton.addEventListener("click", function () {
-            window.location.href = "login.html"; // Redirect to login page
-        });
-    });
+      document.addEventListener("DOMContentLoaded", function () {
+          const loginButton = document.querySelector('.btn-outline-primary');
 
-  </script>
-  
-  
+          loginButton.addEventListener("click", function () {
+              window.location.href = "login.html"; // Redirect to login page
+          });
+      });
+
+      // Password Strength Indicator
+      const passwordField = document.getElementById("IDPassword");
+      const passwordStrength = document.querySelector(".password-strength");
+
+      passwordField.addEventListener("input", function () {
+          const password = passwordField.value;
+          const strength = calculatePasswordStrength(password);
+          passwordStrength.innerHTML = `Password Strength: ${strength}`;
+      });
+
+      function calculatePasswordStrength(password) {
+          // This is a simple example, you can implement a more complex logic for password strength
+          const length = password.length;
+          if (length < 6) {
+              return "Weak";
+          } else if (length < 10) {
+              return "Medium";
+          } else {
+              return "Strong";
+          }
+      }
+    </script>
 </body>
 </html>

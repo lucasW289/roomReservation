@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <style>
+        .card-title {
+            font-size: 36px;
+            font-weight: 500;
+            color: white;
+        }
+        .card-text {
+            font-size: 36px;
+            font-weight: 500;
+            color: white;
+        }
+        .footer {
+        position: fixed; /* ตั้งค่าให้ footer อยู่ในตำแหน่งที่คงที่ */
+        bottom: 0; /* ให้ footer อยู่ที่ด้านล่างของหน้าจอ */
+        height: 15%;
+        width: 100%; /* กำหนดความกว้างให้เต็มขอบหน้าจอ */
+        background-color: #c5c5c5; /* Light background color */
+        color: #495057; /* Text color */
+        padding: 30px 0; /* Padding */
+        font-family: 'Arial', sans-serif; /* Font family */
+        margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+  <header>
+    <div id="navbarContainer"></div>
+</header>
+<div class="container mb-6">
+  <br><br>
+  <h1 class="mt-4 text-left">Dashboard</h1>
+  <div class="row mt-3 mb-6">
+      <div class="col-md-6 mb-6">
+          <div class="card bg-success border-dark custom-card ">
+              <img src="/public/img/open-door.png" class="card-img-top mx-auto d-block mt-3" style="max-width: 150px;" alt="Free slots">
+              <div class="card-body text-center ">
+                  <h5 class="card-title">Free slots</h5>
+                  <p class="card-text" id="free">100</p>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-6 mb-4">
+          <div class="card bg-warning border-dark custom-card">
+              <img src="/public/img/notification.png" class="card-img-top mx-auto d-block mt-3" style="max-width: 150px;" alt="Pending slots">
+              <div class="card-body text-center ">
+                  <h5 class="card-title">Pending slots</h5>
+                  <p class="card-text" id="pending">40</p>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-6 mb-4">
+          <div class="card bg-danger border-dark custom-card">
+              <img src="/public/img/meeting.png" class="card-img-top mx-auto d-block mt-3" style="max-width: 150px;" alt="Reserved slots">
+              <div class="card-body text-center ">
+                  <h5 class="card-title">Reserved slots</h5>
+                  <p class="card-text" id="reserved">30</p>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-6 mb-4">
+          <div class="card bg-secondary border-dark custom-card">
+              <img src="/public/img/disabled.png" class="card-img-top mx-auto d-block mt-3" style="max-width: 150px;" alt="Disabled rooms">
+              <div class="card-body text-center ">
+                  <h5 class="card-title">Disabled rooms</h5>
+                  <p class="card-text" id="disable">20</p>
+              </div>
+          </div>
+      </div>
+  </div>
+</div><br><br>
+<div id="footerContainer">
+
+  <footer id="footer-section" class="mt-5"></footer>
+</div>
+<script>
+            fetch('/navbarApprover.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            });
+        // Include roominfo using JavaScript Fetch API
+            fetch('/footer.html')
+            .then(response => response.text())
+            .then(data => {
+            document.getElementById('footer-section').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+
+            fetch('/Dashboard')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update HTML elements with received data
+                        document.getElementById('free').textContent = data.free;
+                        document.getElementById('pending').textContent = data.pending;
+                        document.getElementById('reserved').textContent = data.reserved;
+                        document.getElementById('disable').textContent = data.disabled;
+                    })
+                    .catch(error => console.error(error));
+
+</script>
+</body>
+</html>

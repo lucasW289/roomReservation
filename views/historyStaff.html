@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Define table border styles */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #E2F8F4;
+        }
+
+        .pagination {
+            justify-content: center;
+        }
+
+        .footer {
+        position: fixed; /* ตั้งค่าให้ footer อยู่ในตำแหน่งที่คงที่ */
+        bottom: 0; /* ให้ footer อยู่ที่ด้านล่างของหน้าจอ */
+        height: 15%;
+        width: 100%; /* กำหนดความกว้างให้เต็มขอบหน้าจอ */
+        background-color: #c5c5c5; /* Light background color */
+        color: #495057; /* Text color */
+        padding: 30px 0; /* Padding */
+        font-family: 'Arial', sans-serif; /* Font family */
+        margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Your header content here -->
+        <div id="navbarContainer"></div>
+    </header>
+    <div class="container py-5">
+        <h1 class="mt-5 mb-4">History Staff</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Room</th>
+                        <th>Booking date</th>
+                        <th>Time slots</th>
+                        <th>User name</th>
+                        <th>Approver name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Table body will be populated dynamically using JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination" id="pagination"></ul>
+        </nav>
+    </div>
+
+    <div id="footerContainer">
+        <!-- Include footer.html -->
+        <footer id="footer-section"></footer>
+    </div>
+
+    <!-- Link Bootstrap JS and jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Example data (replace with actual data fetching logic)
+        fetch('/navbarStaff.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbarContainer').innerHTML = data;
+        });
+
+        fetch('/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-section').innerHTML = data;
+        })
+        .catch(error => console.error(error));
+
+        // Pagination variables
+        const itemsPerPage = 10;
+        let currentPage = 1;
+        let bookingHistory = []; // Array to store all booking history data
+
+        // Function to render the table for a specific page
+        function renderTablePage(pageNumber) {
+            const startIndex = (pageNumber - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentPageData = bookingHistory.slice(startIndex, endIndex);
+            showBookingHistory(currentPageData);
+        }
+
+        // Function to render pagination links
+        function renderPagination() {
+            const totalPages = Math.ceil(bookingHistory.length / itemsPerPage);
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.classList.add('page-item');
+                const link = document.createElement('a');
+                link.classList.add('page-link');
+                link.href = '#';
+                link.textContent = i;
+                link.addEventListener('click', () => {
+                    currentPage = i;
+                    renderTablePage(currentPage);
+                    updateActivePageLink();
+                });
+                li.appendChild(link);
+                paginationContainer.appendChild(li);
+            }
+
+            updateActivePageLink();
+        }
+
+        // Function to update the active page link in pagination
+        function updateActivePageLink() {
+            const paginationLinks = document.querySelectorAll('#pagination li');
+            paginationLinks.forEach(link => {
+                if (parseInt(link.textContent) === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        async function getBookingHistory() {
+            try {
+                const response = await fetch('/historytable');
+                if (response.ok) {
+                    const data = await response.json();
+                    bookingHistory = data;
+                    renderTablePage(currentPage);
+                    renderPagination();
+                } else {
+                    throw Error('Failed to fetch booking history');
+                }
+            } catch (error) {
+                console.error(error.message);
+                // Handle error (e.g., display error message to user)
+            }
+        }
+
+        // Function to display booking history in the table
+        function showBookingHistory(data) {
+            const tbody = document.querySelector('#tableBody');
+            let temp = '';
+            let rowNumber = (currentPage - 1) * itemsPerPage + 1; // Initialize row number based on current page
+            data.forEach(function(booking) {
+                temp += `<tr>`;
+                temp += `<td>${rowNumber}</td>`;
+                temp += `<td>${booking.Room}</td>`;
+                temp += `<td>${new Date(booking['Booking date']).toLocaleDateString()}</td>`;
+                temp += `<td>${booking['Time slots']}</td>`;
+                temp += `<td>${booking['Student name']}</td>`;
+                temp += `<td>${booking['Approver name']}</td>`;
+                temp += `<td>${booking.Action}</td>`;
+                temp += `</tr>`;
+                rowNumber++; // Increment row number counter
+            });
+            tbody.innerHTML = temp;
+        }
+
+        // Call the function to fetch and display booking history
+        getBookingHistory();
+    </script>
+</body>
+</html>

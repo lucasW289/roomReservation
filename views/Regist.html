@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container-fluid {
+            height: 100%;
+            display: flex;
+        }
+
+        .left-div,
+        .right-div {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        .left-div {
+            background-color: white;
+        }
+
+        .right-div {
+            background-color: #FFCF81;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-card {
+            max-width: 500px;
+        }
+
+        
+
+        .spinner {
+            width: 70.4px;
+            height: 70.4px;
+            --clr: rgb(0, 0, 0);
+            --clr-alpha: rgb(247, 197, 159, .1);
+            animation: spinner 1.6s infinite ease;
+            transform-style: preserve-3d;
+            margin-left: 14rem;
+            margin-top: 3rem;
+        }
+
+        .spinner>div {
+            background-color: var(--clr-alpha);
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            border: 3.5px solid var(--clr);
+        }
+
+        .spinner div:nth-of-type(1) {
+            transform: translateZ(-35.2px) rotateY(180deg);
+        }
+
+        .spinner div:nth-of-type(2) {
+            transform: rotateY(-270deg) translateX(50%);
+            transform-origin: top right;
+        }
+
+        .spinner div:nth-of-type(3) {
+            transform: rotateY(270deg) translateX(-50%);
+            transform-origin: center left;
+        }
+
+        .spinner div:nth-of-type(4) {
+            transform: rotateX(90deg) translateY(-50%);
+            transform-origin: top center;
+        }
+
+        .spinner div:nth-of-type(5) {
+            transform: rotateX(-90deg) translateY(50%);
+            transform-origin: bottom center;
+        }
+
+        .spinner div:nth-of-type(6) {
+            transform: translateZ(35.2px);
+        }
+
+        @keyframes spinner {
+            0% {
+                transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
+            }
+
+            50% {
+                transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+            }
+
+            100% {
+                transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="left-div">
+            <div class="form-card">
+                <div class="text-center">
+                    <img src="/public/img/Flogo.png" style="width: 185px;" alt="logo">
+                    <hr>
+                    <h4 class="mt-1 mb-3 pb-1">Create your account</h4>
+                </div>
+                <form>
+                    <div class="form-group">
+                        <label for="IDName">Name</label>
+                        <input type="text" id="IDName" class="form-control" placeholder="Enter your full name...">
+                    </div>
+                    <div class="form-group">
+                        <label for="IDEmail">Email</label>
+                        <input type="email" id="IDEmail" class="form-control" placeholder="Enter your email address...">
+                    </div>
+                    <div class="form-group">
+                        <label for="IDUsername">Username</label>
+                        <input type="text" id="IDUsername" class="form-control" placeholder="Enter your username...">
+                    </div>
+                    <div class="form-group">
+                        <label for="IDPassword">Password</label>
+                        <input type="password" id="IDPassword" class="form-control"
+                            placeholder="Enter your password...">
+                    </div>
+                    <div class="form-group">
+                        <label for="IDConfirmPassword">Confirm Password</label>
+                        <input type="password" id="IDConfirmPassword" class="form-control"
+                            placeholder="Confirm your password...">
+                    </div>
+                    <div class="text-center pt-3 pb-1">
+                        <div class="d-grid">
+                            <button class="btn btn-success" type="button">Sign Up</button>
+                        </div>
+                    </div>
+                    <div class="text-center pt-1 pb-4">
+                        <p class="me-2 mb-0">Already have an account?</p>
+                        <button type="button" class="btn btn-outline-primary mt-2">Login</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <div class="right-div">
+            <div class="spinner-container">
+            <div class="m-4 text-center">
+                <h3>Welcome to our Room reservation system</h3>
+                <hr>
+                <div class="spinner">
+                    <div><img src="/public/img/logo.png" alt="" style="width: 70.4px"></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const nameField = document.getElementById("IDName");
+            const emailField = document.getElementById("IDEmail");
+            const usernameField = document.getElementById("IDUsername");
+            const passwordField = document.getElementById("IDPassword");
+            const confirmPasswordField = document.getElementById("IDConfirmPassword");
+            const signUpButton = document.querySelector('.btn-success');
+
+            signUpButton.addEventListener("click", async function () {
+                const name = nameField.value.trim();
+                const email = emailField.value.trim();
+                const username = usernameField.value.trim();
+                const password = passwordField.value.trim();
+                const confirmPassword = confirmPasswordField.value.trim();
+
+                if (!name || !email || !username || !password || !confirmPassword) {
+                    alert("Please fill in all fields.");
+                    return; // Stop execution if any field is empty
+                }
+
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match!");
+                }
+                else {
+                    try {
+                        // Send a Fetch request to the server for registration
+                        const options = {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ "Name": name, "Email": email, "Username": username, "Password": password })
+                        };
+                        const response = await fetch('/create', options);
+                        if (response.ok) {
+                            // convert response to text
+                            const data = await response.text();
+                            // alert(data);
+                            // Jump to the welcome page
+                            location.replace(data);
+                        }
+                        else if (response.status === 401) {
+                            // convert response to text
+                            const data = await response.text();
+                            // alert(data);
+                            throw Error(data);
+                        }
+                        else {
+                            // alert('Connection error');
+                            throw Error('Connection error');
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alert("An error occurred. Please try again later.");
+                    }
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginButton = document.querySelector('.btn-outline-primary');
+
+            loginButton.addEventListener("click", function () {
+                window.location.href = "/"; // Redirect to login page
+            });
+        });
+    </script>
+</body>
+
+</html>

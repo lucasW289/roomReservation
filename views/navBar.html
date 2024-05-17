@@ -1,0 +1,62 @@
+<!-- navbar.html -->
+<style>
+    .navbar {
+        background-color: rgba(255, 252, 236, 0.9); /* Background color with slight transparency */
+        border-bottom: 0.5px solid #000;
+        position: fixed; /* Fixed position when scrolling */
+        width: 100%; /* Full width */
+        top: 0; /* Align navbar to the top */
+        z-index: 1000; /* Ensure navbar is on top */
+    }
+
+    .navbar-brand,
+    .nav-link {
+        color: #000 !important; /* Set color of links */
+    }
+    /* Add hover effect to navbar links */
+    .nav-link:hover {
+    color: #FF5733 !important; /* Change color on hover */
+    transition: color 0.3s ease; /* Smooth transition */
+    }
+
+
+    .navbar-brand .logo {
+        max-height: 50px; /* Adjust the maximum height of the logo image */
+        margin-right: 8px; /* Add some space between the logo image and the text */
+    }
+
+    .navbar-brand .logoName {
+        font-size: 24px; /* Set font size of the logo name */
+        font-weight: bold; /* Set font weight of the logo name */
+    }
+
+    .navbar-toggler-icon {
+        background-color: #000; /* Set color of the toggler icon */
+    }
+    .nav-link {
+        font-weight: 700;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img class="logo" src="/public/img/logo.png" alt="Logo"> <!-- Add the logo image -->
+            <span class="logoName">ʟɨɮ</span> Reservation
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item btn"><a class="nav-link" href="/browseRoomUser.html">Browse Room List</a></li>
+                <li class="nav-item btn"><a class="nav-link" href="/user/history">History</a></li>
+                <li class="nav-item btn"><a class="nav-link" href="/status">Status</a></li>
+                <li class="nav-item btn">
+                    <a href="/logout" class="btn btn-danger mx-2">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+

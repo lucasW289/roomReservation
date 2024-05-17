@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Availability</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <style>
+        .room-info {
+            padding-top: 100px; /* Adjust this value according to your navbar's height */
+            background-color: #f8f9fa; /* Add a background color */
+        }
+        .room-info-item {
+            height: 300px; /* Set a fixed height for room items */
+            border-radius: 10px; /* Add some border radius for a cleaner look */
+            overflow: hidden; /* Hide overflow content */
+        }
+        .room-info-item .room-overlay {
+            padding: 20px; /* Add padding for text inside the room items */
+            background-color: rgba(255, 255, 255, 0.4); /* Semi-transparent background for text */
+            height: 100%; /* Occupy full height of the room items */
+            display: flex; /* Use flexbox for vertical centering */
+            flex-direction: column; /* Align content vertically */
+            justify-content: center; /* Align content vertically */
+        }
+        /* Background image for the room info items */
+        .small-room,
+        .medium-room,
+        .large-room {
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        /* Background image for the small room */
+        .small-room {
+            background-image: url('./images/SRoom.jpeg');
+            opacity: 0.8; /* Adjust opacity of the background image */
+        }
+        /* Background image for the medium room */
+        .medium-room {
+            background-image: url('./images/MRoom.jpeg');
+            opacity: 0.8; /* Adjust opacity of the background image */
+        }
+        /* Background image for the large room */
+        .large-room {
+            background-image: url('./images/LRoom.jpeg');
+            opacity: 0.8; /* Adjust opacity of the background image */
+        }
+        /* Overlay for the room info items */
+        .room-overlay {
+            background-color: rgba(255, 255, 255, 0.7); /* Adjust opacity of the overlay */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="navbarContainer"></div>
+<br>
+<section class="room-info">
+    <div id="roominfo-section"></div>
+</section>
+<div class="container mt-5">
+    <h1>Room Availability</h1>
+
+    <div class="filter-inputs">
+        <div class="row">
+            <div class="col-md-6">
+                <select class="form-control" id="timeSlotFilter">
+                    <option value="">Time Slot</option>
+                    <option value="8-10">8-10</option>
+                    <option value="10-12">10-12</option>
+                    <option value="13-15">13-15</option>
+                    <option value="15-17">15-17</option>
+                </select>
+                
+            </div>
+            <div class="col-md-6">
+                <select class="form-control" id="availabilityFilter">
+                    <option value="">Availability</option>
+                    <option value="Free">Available</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Reserved">Reserved</option>
+                    <option value="Disabled">Disabled</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <table id="roomAvailability" class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Room Number</th>
+                <th>Room Size</th>
+                <th>Time Slot</th>
+                <th>Availability</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be dynamically inserted here -->
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul id="pagination" class="pagination justify-content-center">
+            <!-- Pagination links will be dynamically inserted here -->
+        </ul>
+    </nav>
+
+</div>
+<div id="footerContainer">
+    <!-- Include footer.html -->
+    <footer id="footer-section"></footer>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Include SweetAlert2 library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch room booking data from the server
+        // Fetch room booking data from the server
+        fetch('/browseRoomUser')
+        .then(response => response.json())
+        .then(data => {
+            roomBookings = data;
+            renderTablePage(currentPage);
+            renderPagination();
+        })
+        .catch(error => console.error('Error fetching room booking data:', error));
+        // Include navbar using JavaScript Fetch API
+        fetch('navbarapprover.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-section').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+
+        fetch('/views/roominfo.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('roominfo-section').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+
+        // Add event listeners to dropdowns
+        const timeSlotFilter = document.getElementById('timeSlotFilter');
+        const availabilityFilter = document.getElementById('availabilityFilter');
+
+        timeSlotFilter.addEventListener('change', () => {
+            filterRoomBookings();
+        });
+
+        availabilityFilter.addEventListener('change', () => {
+            filterRoomBookings();
+        });
+    });
+
+    async function renderTable(roomBookings) {
+    const tableBody = document.querySelector('#roomAvailability tbody');
+    tableBody.innerHTML = '';
+
+    // Sort the room bookings by room number and then by time slot
+    roomBookings.sort((a, b) => {
+        // Sort by room number
+        if (a.RoomID !== b.RoomID) {
+            return a.RoomID - b.RoomID;
+        }
+        // If room numbers are the same, sort by time slot
+        const timeSlots = ['8-10', '10-12', '13-15', '15-17'];
+        return timeSlots.indexOf(a.TimeSlot) - timeSlots.indexOf(b.TimeSlot);
+    });
+
+    // Function to fetch room details from the API
+    const fetchRoomDetails = async (roomID) => {
+        try {
+            const response = await fetch(`/rooms/${roomID}`);
+            if (!response.ok) {
+                throw new Error('Room not found');
+            }
+            const room = await response.json();
+            return room;
+        } catch (error) {
+            console.error('Error fetching room details:', error);
+            return null;
+        }
+    };
+
+    // Render table rows
+    for (const booking of roomBookings) {
+        const tr = document.createElement('tr');
+        const roomID = booking.RoomID;
+        const timeSlot = booking.TimeSlot;
+        const status = booking.Status;
+
+        // Fetch room details including RoomNumber and RoomSize from the API
+        const roomDetails = await fetchRoomDetails(roomID);
+
+        if (roomDetails) {
+            const roomNumber = roomDetails.RoomNumber;
+            const roomSize = roomDetails.RoomSize;
+
+            // Determine color based on status
+            let statusColor = '';
+            switch (status) {
+                case 'Free':
+                    statusColor = 'bg-success'; // Green color for Free
+                    break;
+                case 'Pending':
+                    statusColor = 'bg-warning'; // Yellow color for Pending
+                    break;
+                case 'Reserved':
+                    statusColor = 'bg-danger'; // Red color for Reserved
+                    break;
+                case 'Disabled':
+                    statusColor = 'bg-secondary text-white'; // Grey color for Disabled
+                    break;
+                default:
+                    statusColor = ''; // Default color
+            }
+
+            // Check if the current time is beyond the time slot
+            const currentTime = new Date();
+            const [startHour, endHour] = timeSlot.split('-').map(time => parseInt(time));
+            const isTimeSlotPassed = currentTime.getHours() >= endHour;
+
+            // Create table row with room details, status, and reserve button
+            tr.innerHTML = `
+                <td>${roomNumber}</td>
+                <td>${roomSize}</td>
+                <td>${timeSlot}</td>
+                <td><span class="badge ${statusColor}">${status}</span></td>
+            `;
+            tableBody.appendChild(tr);
+        } else {
+            console.error('Room details not found for RoomID:', roomID);
+        }
+    }
+}
+
+const itemsPerPage = 16;
+    let currentPage = 1;
+    let roomBookings = []; // Array to store all room bookings data
+
+    // Function to render the table for a specific page
+    function renderTablePage(pageNumber) {
+        const startIndex = (pageNumber - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentPageData = roomBookings.slice(startIndex, endIndex);
+        renderTable(currentPageData);
+    }
+    // Function to render pagination links
+    function renderPagination() {
+        const totalPages = Math.ceil(roomBookings.length / itemsPerPage);
+        const paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.classList.add('page-item');
+            const link = document.createElement('a');
+            link.classList.add('page-link');
+            link.href = '#';
+            link.textContent = i;
+            link.addEventListener('click', () => {
+                currentPage = i;
+                renderTablePage(currentPage);
+                updateActivePageLink();
+            });
+            li.appendChild(link);
+            paginationContainer.appendChild(li);
+        }
+
+        updateActivePageLink();
+    }
+
+    // Function to update the active page link in pagination
+    function updateActivePageLink() {
+        const paginationLinks = document.querySelectorAll('#pagination li');
+        paginationLinks.forEach(link => {
+            if (parseInt(link.textContent) === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+
+
+
+
+    function filterRoomBookings() {
+        const timeSlot = document.getElementById('timeSlotFilter').value;
+        const availability = document.getElementById('availabilityFilter').value;
+
+        fetch('/browseRoomUser')
+            .then(response => response.json())
+            .then(roomBookings => {
+                // Filter room bookings based on time slot and availability
+                const filteredBookings = roomBookings.filter(booking => {
+                    return (timeSlot === '' || booking.TimeSlot === timeSlot) &&
+                        (availability === '' || booking.Status === availability);
+                });
+
+                // Render the table with filtered data
+                renderTable(filteredBookings);
+            })
+            .catch(error => console.error('Error fetching room booking data:', error));
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <style>
+        /* Define table border styles */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #b1fa71ac;
+        }
+
+        .pagination {
+            justify-content: center;
+        }
+
+        .footer {
+        position: fixed; /* ตั้งค่าให้ footer อยู่ในตำแหน่งที่คงที่ */
+        bottom: 0; /* ให้ footer อยู่ที่ด้านล่างของหน้าจอ */
+        height: 15%;
+        width: 100%; /* กำหนดความกว้างให้เต็มขอบหน้าจอ */
+        background-color: #c5c5c5; /* Light background color */
+        color: #495057; /* Text color */
+        padding: 30px 0; /* Padding */
+        font-family: 'Arial', sans-serif; /* Font family */
+        margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="navbarContainer"></div>
+    </header>
+    <div class="container py-5">
+        <h1 class="mt-5 mb-4">Request table</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Room</th>
+                        <!-- <th>Booking date</th> -->
+                        <th>Time slots</th>
+                        <th>User name</th>
+                        <th>User ID</th>
+                        <th>Approve Action</th>
+                        <th>Reject Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Table body will be populated dynamically using JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination" id="pagination"></ul>
+        </nav>
+    </div>
+
+    <div id="footerContainer">
+        <footer id="footer-section"></footer>
+    </div>
+
+    <!-- Link Bootstrap JS and jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Example data (replace with actual data fetching logic)
+        fetch('/navbarApprover.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbarContainer').innerHTML = data;
+        });
+        // Include roominfo using JavaScript Fetch API
+
+        fetch('/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-section').innerHTML = data;
+        })
+        .catch(error => console.error(error));
+
+
+// Function to fetch pending room reservation requests from the backend API
+function fetchPendingRequests() {
+    fetch('/pendingRoomRequests')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Log the API response
+            populateTable(data); // Call populateTable function with the fetched data
+        })
+        .catch(error => {
+            console.error('Error fetching pending room requests:', error);
+        });
+}
+
+// Function to approve a room reservation request
+function approveRequest(bookingID, rowIndex) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to approve this request.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Approved the request',
+        cancelButtonText: 'cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If user confirms, send request to backend API to approve the request
+            fetch(`/approveRequest/${bookingID}`, { method: 'PUT' })
+                .then(response => {
+                    if (response.ok) {
+                        // If request is successful, remove the row from the table
+                        document.getElementById('tableBody').deleteRow(rowIndex);
+                        Swal.fire('Approved!', 'The request has been approved.', 'success');
+                    } else {
+                        // If request fails, show error message
+                        throw new Error('Failed to approve request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error approving request:', error);
+                    Swal.fire('Error!', 'Failed to approve request.', 'error');
+                });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire('Cancelled', 'The request approval was cancelled.', 'info');
+        }
+    });
+}
+
+// Function to reject a room reservation request
+function rejectRequest(bookingID, rowIndex) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to reject this request.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Rejected the request',
+        cancelButtonText: 'cancel',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If user confirms, send request to backend API to reject the request
+            fetch(`/rejectRequest/${bookingID}`, { method: 'PUT' })
+                .then(response => {
+                    if (response.ok) {
+                        // If request is successful, remove the row from the table
+                        document.getElementById('tableBody').deleteRow(rowIndex);
+                        Swal.fire('Rejected!', 'The request has been rejected.', 'success');
+                    } else {
+                        // If request fails, show error message
+                        throw new Error('Failed to reject request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error rejecting request:', error);
+                    Swal.fire('Error!', 'Failed to reject request.', 'error');
+                });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire('Cancelled', 'The request rejection was cancelled.', 'info');
+        }
+    });
+}
+
+
+
+
+
+
+
+
+// Function to populate the table dynamically
+function populateTable(data) {
+    const tableBody = document.getElementById('tableBody');
+    const pagination = document.getElementById('pagination');
+    const pageSize = 15; // Set the page size here or fetch dynamically from the server
+
+    // Clear existing table rows and pagination
+    tableBody.innerHTML = '';
+    pagination.innerHTML = '';
+
+    // Loop through the data and create table rows
+    data.forEach((item, index) => {
+    const row = document.createElement('tr');
+    row.id = `row_${index}`; // Assign a unique ID to the row
+    row.innerHTML = `
+        <td>${item.BookingID}</td>
+        <td>${item.RoomNumber}</td>
+        
+        <td>${item.TimeSlot}</td>
+        <td>${item.Name}</td>
+        <td>${item.UserID}</td>
+        <td>
+            <button class="btn btn-primary" onclick="approveRequest(${item.BookingID}, 'row_${index}')">Approve</button>
+        </td>
+        <td>
+            <button class="btn btn-danger" onclick="rejectRequest(${item.BookingID}, 'row_${index}')">Reject</button>
+        </td>
+    `;
+    tableBody.appendChild(row);
+    });
+
+
+    // You can implement pagination logic here if needed
+}
+
+// Call the fetchPendingRequests function to fetch data from the backend
+fetchPendingRequests();
+
+    </script>
+</body>
+</html>

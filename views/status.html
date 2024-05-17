@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User's Status</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .footer {
+        position: fixed; /* ตั้งค่าให้ footer อยู่ในตำแหน่งที่คงที่ */
+        bottom: 0; /* ให้ footer อยู่ที่ด้านล่างของหน้าจอ */
+        height: 15%;
+        width: 100%; /* กำหนดความกว้างให้เต็มขอบหน้าจอ */
+        background-color: #c5c5c5; /* Light background color */
+        color: #495057; /* Text color */
+        padding: 30px 0; /* Padding */
+        font-family: 'Arial', sans-serif; /* Font family */
+        margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbarContainer"></div>
+    <br>
+    <div class="container py-5 mt-5">
+        <h1 class="text-center">Reservation Status</h1>
+        <div id="reservationStatus" class="mt-4"></div>
+    </div>
+    <div id="footerContainer">
+        <!-- Include footer.html -->
+        <footer id="footer-section"></footer>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Fetch reservation status data for the current user from the server
+            fetch("http://localhost:3002/user/reservationStatus", {
+                method: 'GET',
+                credentials: 'include' // Include credentials (session ID) in the request
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Log the data to see its structure
+                    const reservationStatusContainer = document.getElementById('reservationStatus');
+                    // Check if data is empty or not an array
+                    if (!Array.isArray(data) || data.length === 0) {
+                        reservationStatusContainer.innerHTML = "<p>No reservation status found for the specified user.</p>";
+                    } else {
+                        // Iterate over each reservation status and create a card for it
+                        data.forEach(status => {
+                            const card = `
+                                <div class="card my-3">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Reservation Status</h4>
+                                        <p><strong>Room Size:</strong> ${status.RoomSize}</p>
+                                        <p><strong>Room Number:</strong> ${status.RoomNumber}</p>
+                                        <p><strong>Time Slot:</strong> ${status.TimeSlot}</p>
+                                        <p><strong>Status:</strong> ${status.Status}</p>
+                                    </div>
+                                </div>
+                            `;
+                            reservationStatusContainer.innerHTML += card;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching reservation status:", error);
+                    // Display error message
+                    document.getElementById('reservationStatus').innerHTML = "<p>Error fetching reservation status.</p>";
+                });
+        });
+    
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbarContainer').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+    
+        fetch('footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-section').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room Availability</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Include SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
+  <link rel="stylesheet" href="/public/css/style.css" />
+  <style>
+    .room-info {
+      padding-top: 100px;
+      /* Adjust this value according to your navbar's height */
+      background-color: #f8f9fa;
+      /* Add a background color */
+    }
+
+    .room-info-item {
+      height: 300px;
+      /* Set a fixed height for room items */
+      border-radius: 10px;
+      /* Add some border radius for a cleaner look */
+      overflow: hidden;
+      /* Hide overflow content */
+    }
+
+    .room-info-item .room-overlay {
+      padding: 20px;
+      /* Add padding for text inside the room items */
+      background-color: rgba(255, 255, 255, 0.4);
+      /* Semi-transparent background for text */
+      height: 100%;
+      /* Occupy full height of the room items */
+      display: flex;
+      /* Use flexbox for vertical centering */
+      flex-direction: column;
+      /* Align content vertically */
+      justify-content: center;
+      /* Align content vertically */
+    }
+
+    /* Background image for the room info items */
+    .small-room,
+    .medium-room,
+    .large-room {
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    /* Background image for the small room */
+    .small-room {
+      background-image: url('./images/SRoom.jpeg');
+      opacity: 0.8;
+      /* Adjust opacity of the background image */
+    }
+
+    /* Background image for the medium room */
+    .medium-room {
+      background-image: url('./images/MRoom.jpeg');
+      opacity: 0.8;
+      /* Adjust opacity of the background image */
+    }
+
+    /* Background image for the large room */
+    .large-room {
+      background-image: url('./images/LRoom.jpeg');
+      opacity: 0.8;
+      /* Adjust opacity of the background image */
+    }
+
+    /* Overlay for the room info items */
+    .room-overlay {
+      background-color: rgba(255, 255, 255, 0.7);
+      /* Adjust opacity of the overlay */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="navbarContainer"></div>
+  <br />
+  <section class="room-info">
+    <div id="roominfo-section"></div>
+  </section>
+
+  <div class="container mt-5">
+    <h1>Room Availability</h1>
+
+    <div class="filter-inputs">
+      <div class="row">
+        <div class="col-md-6">
+          <select class="form-control" id="timeSlotFilter">
+            <option value="">Time Slot</option>
+            <option value="8-10">8-10</option>
+            <option value="10-12">10-12</option>
+            <option value="13-15">13-15</option>
+            <option value="15-17">15-17</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <select class="form-control" id="availabilityFilter">
+            <option value="">Availability</option>
+            <option value="Free">Available</option>
+            <option value="Pending">Pending</option>
+            <option value="Reserved">Reserved</option>
+            <option value="Disabled">Disabled</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row m-3">
+      <div class="col-md-12">
+        <button class="btn btn-success" id="addRoomButton">Add Room</button>
+      </div>
+    </div>
+
+    <table id="roomAvailability" class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>Room Number</th>
+          <th>Room Size</th>
+          <th>Time Slot</th>
+          <th>Availability</th>
+          <th>Action</th>
+          <!-- Action Column -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be dynamically inserted here -->
+      </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+      <ul id="pagination" class="pagination justify-content-center">
+        <!-- Pagination links will be dynamically inserted here -->
+      </ul>
+    </nav>
+  </div>
+  <div id="footerContainer">
+    <!-- Include footer.html -->
+    <footer id="footer-section"></footer>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Include SweetAlert2 library -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Fetch room booking data from the server
+      // Fetch room booking data from the server
+      fetch('/browseRoomUser')
+        .then(response => response.json())
+        .then(data => {
+            roomBookings = data;
+            renderTablePage(currentPage);
+            renderPagination();
+        })
+        .catch(error => console.error('Error fetching room booking data:', error));
+
+      // Include navbar using JavaScript Fetch API
+      fetch("navbarStaff.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbarContainer").innerHTML = data;
+        })
+        .catch((error) => console.error(error));
+
+      fetch("footer.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("footer-section").innerHTML = data;
+        })
+        .catch((error) => console.error(error));
+
+      fetch('/views/roominfo.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('roominfo-section').innerHTML = data;
+        })
+        .catch(error => console.error(error));
+
+      // Add event listener for time slot filter
+      const timeSlotFilter = document.getElementById("timeSlotFilter");
+      timeSlotFilter.addEventListener("change", () => {
+        filterTable();
+      });
+
+      // Add event listener for availability filter
+      const availabilityFilter = document.getElementById("availabilityFilter");
+      availabilityFilter.addEventListener("change", () => {
+        filterTable();
+      });
+    });
+
+    function filterTable() {
+      const timeSlotFilterValue = document.getElementById("timeSlotFilter").value;
+      const availabilityFilterValue = document.getElementById("availabilityFilter").value;
+
+      // Fetch room booking data from the server
+      fetch("/browseRoomUser")
+        .then((response) => response.json())
+        .then((roomBookings) => {
+          let filteredBookings = roomBookings;
+
+          // Apply time slot filter
+          if (timeSlotFilterValue) {
+            filteredBookings = filteredBookings.filter((booking) => booking.TimeSlot === timeSlotFilterValue);
+          }
+
+          // Apply availability filter
+          if (availabilityFilterValue) {
+            filteredBookings = filteredBookings.filter((booking) => booking.Status === availabilityFilterValue);
+          }
+
+          // Render filtered table
+          renderTable(filteredBookings);
+        })
+        .catch((error) =>
+          console.error("Error fetching room booking data:", error)
+        );
+    }
+
+
+    async function renderTable(roomBookings) {
+      const tableBody = document.querySelector('#roomAvailability tbody');
+      tableBody.innerHTML = '';
+
+      // Sort the room bookings by room number and then by time slot
+      roomBookings.sort((a, b) => {
+        // Sort by room number
+        if (a.RoomID !== b.RoomID) {
+          return a.RoomID - b.RoomID;
+        }
+        // If room numbers are the same, sort by time slot
+        const timeSlots = ['8-10', '10-12', '13-15', '15-17'];
+        return timeSlots.indexOf(a.TimeSlot) - timeSlots.indexOf(b.TimeSlot);
+      });
+
+      // Function to fetch room details from the API
+      const fetchRoomDetails = async (roomID) => {
+        try {
+          const response = await fetch(`/rooms/${roomID}`);
+          if (!response.ok) {
+            throw new Error('Room not found');
+          }
+          const room = await response.json();
+          return room;
+        } catch (error) {
+          console.error('Error fetching room details:', error);
+          return null;
+        }
+      };
+
+      // Render table rows
+      for (const booking of roomBookings) {
+        const tr = document.createElement('tr');
+        const roomID = booking.RoomID;
+        const timeSlot = booking.TimeSlot;
+        const status = booking.Status;
+
+        // Fetch room details including RoomNumber and RoomSize from the API
+        const roomDetails = await fetchRoomDetails(roomID);
+
+        if (roomDetails) {
+          const roomNumber = roomDetails.RoomNumber;
+          const roomSize = roomDetails.RoomSize;
+
+          // Determine color based on status
+          let statusColor = '';
+          switch (status) {
+            case 'Free':
+              statusColor = 'bg-success'; // Green color for Free
+              break;
+            case 'Pending':
+              statusColor = 'bg-warning'; // Yellow color for Pending
+              break;
+            case 'Reserved':
+              statusColor = 'bg-danger'; // Red color for Reserved
+              break;
+            case 'Disabled':
+              statusColor = 'bg-secondary text-white'; // Grey color for Disabled
+              break;
+            default:
+              statusColor = ''; // Default color
+          }
+
+          // Check if the current time is beyond the time slot
+          const currentTime = new Date();
+          const [startHour, endHour] = timeSlot.split('-').map(time => parseInt(time));
+          const isTimeSlotPassed = currentTime.getHours() >= endHour;
+
+          // Create table row with room details, status, and reserve button
+          tr.innerHTML = `
+                <td>${roomNumber}</td>
+                <td>${roomSize}</td>
+                <td>${timeSlot}</td>
+                <td><span class="badge ${statusColor}">${status}</span></td>
+                <td>
+                    <button class="btn btn-primary edit-btn" data-room-id="${roomID}" data-time-slot="${timeSlot}">Edit</button>
+                    <button class="btn btn-danger disable-btn" data-room-id="${roomID}" data-time-slot="${timeSlot}">Disable</button>
+                </td>
+            `;
+          tableBody.appendChild(tr);
+        } else {
+          console.error('Room details not found for RoomID:', roomID);
+        }
+
+        
+        // Add event listener for Edit button
+        // Add event listener for Edit button
+        const editBtn = tr.querySelector(".edit-btn");
+        editBtn.addEventListener("click", () => {
+          // Show SweetAlert prompt for selecting room size
+          Swal.fire({
+            title: 'Select Room Size',
+            input: 'select',
+            inputOptions: {
+              'Large': 'Large',
+              'Medium': 'Medium',
+              'Small': 'Small'
+            },
+            inputPlaceholder: 'Select room size',
+            confirmButtonColor: "#3085d6",
+            showCancelButton: true,
+            inputValidator: (value) => {
+              if (!value) {
+                return 'You need to select a room size';
+              }
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              const selectedRoomSize = result.value;
+              // Update room size in the database
+              fetch(`/rooms/${roomID}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ roomSize: selectedRoomSize }), // Sending room size in the request body
+              })
+                .then((response) => response.json())
+                .then((result) => {
+                  if (result.success) {
+                    // Update the room size in the table
+                    tr.querySelector("td:nth-child(2)").innerText = selectedRoomSize;
+                    // Show success message
+                    Swal.fire({
+                      title: "Room Size Updated!",
+                      text: `Room ${roomID} size has been updated to ${selectedRoomSize}.`,
+                      icon: "success",
+                    });
+                  } else {
+                    Swal.fire({
+                      title: "Error!",
+                      text: result.message,
+                      icon: "error",
+                    });
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error updating room size:", error);
+                  Swal.fire({
+                    title: "Error!",
+                    text: "An error occurred while updating the room size. Please try again later.",
+                    icon: "error",
+                  });
+                });
+            }
+          });
+        });
+        const disableBtn = tr.querySelector(".disable-btn");
+        disableBtn.addEventListener("click", () => {
+          // Show confirmation dialog
+          Swal.fire({
+            title: "Are you sure?",
+            text: `Do you want to disable Room ${roomID} for Time Slot ${timeSlot}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "",
+            confirmButtonText: "Yes, disable it!",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Update availability in the database
+              fetch("/updateAvailability", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  roomId: roomID,
+                  timeSlot: timeSlot,
+                  status: "Disabled",
+                }),
+              })
+                .then((response) => response.json())
+                .then((result) => {
+                  if (result.success) {
+                    // Disable the Disable button after successful update
+                    disableBtn.disabled = true;
+                    // Update the status in the table
+                    tr.querySelector(".badge").innerText = "Disabled";
+                    // Show success message
+                    Swal.fire({
+                      title: "Room Disabled!",
+                      text: `Room ${roomID} for Time Slot ${timeSlot} has been disabled.`,
+                      icon: "success",
+                    });
+                  } else {
+                    Swal.fire({
+                      title: "Error!",
+                      text: result.message,
+                      icon: "error",
+                    });
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error disabling room:", error);
+                  Swal.fire({
+                    title: "Error!",
+                    text: "An error occurred while disabling the room. Please try again later.",
+                    icon: "error",
+                  });
+                });
+            }
+          });
+        });
+      }
+
+    }
+
+    const itemsPerPage = 16;
+    let currentPage = 1;
+    let roomBookings = []; // Array to store all room bookings data
+
+    // Function to render the table for a specific page
+    function renderTablePage(pageNumber) {
+        const startIndex = (pageNumber - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentPageData = roomBookings.slice(startIndex, endIndex);
+        renderTable(currentPageData);
+    }
+    // Function to render pagination links
+    function renderPagination() {
+        const totalPages = Math.ceil(roomBookings.length / itemsPerPage);
+        const paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.classList.add('page-item');
+            const link = document.createElement('a');
+            link.classList.add('page-link');
+            link.href = '#';
+            link.textContent = i;
+            link.addEventListener('click', () => {
+                currentPage = i;
+                renderTablePage(currentPage);
+                updateActivePageLink();
+            });
+            li.appendChild(link);
+            paginationContainer.appendChild(li);
+        }
+
+        updateActivePageLink();
+    }
+
+    // Function to update the active page link in pagination
+    function updateActivePageLink() {
+        const paginationLinks = document.querySelectorAll('#pagination li');
+        paginationLinks.forEach(link => {
+            if (parseInt(link.textContent) === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+
+
+    // Function to add a new room
+    async function addNewRoom(roomName, roomSize) {
+      try {
+        // Check if the room name already exists
+        const checkResponse = await fetch("/checkRoomName", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ roomName: roomName }),
+        });
+        const checkResult = await checkResponse.json();
+
+        // If the room name already exists, show an error message
+        if (!checkResult.success) {
+          throw new Error("Room name already exists");
+        }
+
+        // If the room name doesn't exist, proceed to add the new room
+        const addResponse = await fetch("/addRoom", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ roomName: roomName, roomSize: roomSize }),
+        });
+        const addResult = await addResponse.json();
+
+        // If room added successfully, show success message
+        if (addResult.success) {
+          Swal.fire({
+            title: 'Success!',
+            text: 'New room added successfully!',
+            icon: 'success'
+          });
+          // Refresh the table or perform any other necessary action
+        } else {
+          throw new Error(addResult.message);
+        }
+      } catch (error) {
+        console.error("Error adding room:", error);
+        Swal.fire({
+          title: 'Error!',
+          text: error.message || 'An error occurred while adding the room. Please try again later.',
+          icon: 'error'
+        });
+      }
+    }
+
+    // Add event listener for "Add Room" button
+    const addRoomButton = document.getElementById("addRoomButton");
+    addRoomButton.addEventListener("click", () => {
+      // Show SweetAlert prompt for adding a new room
+      Swal.fire({
+        title: 'Add New Room',
+        html:
+          '<input id="roomName" class="swal2-input" placeholder="Room Name" required>' +
+          '<select id="roomSize" class="swal2-select">' +
+          '<option value="Small">Small</option>' +
+          '<option value="Medium">Medium</option>' +
+          '<option value="Large">Large</option>' +
+          '</select>',
+        focusConfirm: false,
+        confirmButtonText: "Add",
+        confirmButtonColor: "#28a745",
+        showCancelButton: true,
+        preConfirm: () => {
+          const roomName = document.getElementById('roomName').value;
+          const roomSize = document.getElementById('roomSize').value;
+          // Call function to add new room
+          addNewRoom(roomName, roomSize);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
